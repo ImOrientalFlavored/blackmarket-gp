@@ -1,3 +1,8 @@
+#
+.env
+.hintrc
+.sequelizerc
+
 # Logs
 logs
 *.log
