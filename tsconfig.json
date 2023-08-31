@@ -1,15 +1,25 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "useDefineForClassFields": true,
+    "useDefineForClassFields": false,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "typeRoots" : ["./node_modules/@types", "./typings"],
+    "forceConsistentCasingInFileNames": true,
+    "resolvePackageJsonImports": true,
+    "resolvePackageJsonExports": true,
     "module": "ESNext",
+    "esModuleInterop": true,
     "skipLibCheck": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "rootDir": "src",
+    "outDir": "dist",
+    "sourceMap": true,
+    
+    
 
     /* Bundler mode */
-    "moduleResolution": "bundler",
+    "moduleResolution": "Bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -22,6 +32,12 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"],
+  "references": [{ "path": "./tsconfig.node.json" }], 
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node",
+    //"compiler": "typescript"
+  }
 }

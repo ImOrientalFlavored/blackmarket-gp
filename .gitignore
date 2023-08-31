@@ -1,5 +1,6 @@
 #
 .env
+.env*.local
 .hintrc
 .sequelizerc
 
@@ -12,6 +13,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+ref
 node_modules
 dist
 dist-ssr

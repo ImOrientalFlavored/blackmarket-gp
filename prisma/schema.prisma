@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  BASIC
+  PREMIUM
+  SELLER
+  ADMIN
+}
+
+enum Grade {
+  SSSSS
+  SSSS
+  SSS
+  SS
+  A
+  B
+  C
+  D
+  E
+  F
+  G
+  H
+  I
+  J
+  K
+  L
+  M
+  N
+  O
+  P
+  Q
+  R
+  S
+  T
+  U
+  V
+  W
+  X
+  Y
+  Z
+}
+
+model Product {
+  id               Int                @id @default(autoincrement())
+  productName      String             @db.VarChar(255)
+  productDesc      String             @db.Text
+  shortDesc        String?            @db.VarChar(255)
+  grade            Grade?
+  sku              String?            @unique @db.VarChar(255)
+  price            Decimal            @db.Decimal(16, 2)
+  msrp             Decimal?           @db.Decimal(16, 2)
+  size             String?            @db.VarChar(255)
+  weight           Decimal?           @db.Decimal(16, 2)
+  weightUnit       String?            @db.VarChar(20)
+  features         Json?
+  isActive         Boolean?           @default(true)
+  availableForSale Boolean?           @default(true)
+  slug             String?            @unique
+  imageUrl         String?
+  createdAt        DateTime           @default(now()) @db.Timestamp(6)
+  updatedAt        DateTime           @updatedAt @db.Timestamp(6)
+  categoryId       Int
+  category         Category           @relation(fields: [categoryId], references: [id])
+  productInventory ProductInventory[]
+  productImage     ProductImage[]
+}
+
+model Category {
+  id            Int       @id @default(autoincrement())
+  categoryName  String    @db.VarChar(255)
+  categoryDesc  String    @db.VarChar(255)
+  parentId      Int?      @db.Integer
+  slug          String?   @unique
+  createdAt     DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt     DateTime  @updatedAt @db.Timestamp(6)
+  product       Product[]
+}
+
+model ProductInventory {
+  id        Int      @id @default(autoincrement())
+  quantity  Int      @db.Integer
+  status    String? // 'inStock', 'outOfStock', 'onOrder', etc.       
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt @db.Timestamp(6)
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id])
+}
+
+model ProductImage {
+  id        Int      @id @default(autoincrement())
+  imageUrl  String
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt @db.Timestamp(6)
+}
