@@ -1,23 +1,59 @@
+enum Grade{
+  SSSSS = "SSSSS", //All
+  SSSS = "SSSS", //Multi-universal
+  SSS = "SSS", //
+  SS = "SS", //
+  A = "A", //
+  B = "B", //
+  C = "C", //
+  D = "D", //
+  E = "E", //
+  F = "F", //
+  G = "G", //
+  H = "H", //
+  I = "I", //
+  J = "J", //
+  K = "K", //
+  L = "L", //
+  M = "M", //
+  N = "N", //
+  O = "O", //
+  P = "P", //
+  Q = "Q", //
+  R = "R", //
+  S = "S", //
+  T = "T", //
+  U = "U", //
+  V = "V", //
+  W = "W", //
+  X = "X", //
+  Y = "Y", //
+  Z = "Z", //a meter
+}
 export default interface Product {
   id: number;
-  productId: number,
   productName: string,
-  productDesc: string | null,
-  productType: string | null,
-  shortDesc?: string | null,
-  sku: number | null,
-  stockQty: number | null,
-  price: number | null,
-  msrp?: number | null,
-  categoryId: number | null,
-  size: string | null,
-  weight?: number | null,
-  weightUnit?: string | null,
-  color?: string | null,
-  material?: string | null,
-  features?: any | null,
-  productRating: number | null,
-  isActive: boolean | null,
-  createdAt: Date | null,
-  updatedAt: Date | null;
+  productDesc: string,
+  price: number,
+  categoryId: number,
+  productRating: number,
+  isActive: boolean,
+  isAvailable: boolean,
+  createdAt: Date,
+  updatedAt: Date;
+  shortDesc?: string,
+  grade?: Grade,
+  sku?: string,
+  msrp?: number,
+  size?: string,
+  weight?: number,
+  weightUnit?: string,
+  slug?: string,
+  imageUrl?: string,
+  features?: object,
+  orderDetail:[],
+  cartItem:[],
+  productInventory: [],
+  productImage:[],
+  reviews:[]
 }

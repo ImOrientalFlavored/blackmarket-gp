@@ -30,7 +30,13 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    "baseUrl": "./src",
+    "paths": {
+      "@lib/client": ["./lib/client.ts"],
+    }
+
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"],

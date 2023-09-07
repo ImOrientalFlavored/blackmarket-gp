@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import client from './client';
+import client from '../lib/client';
 
 async function dropTables() {
     console.log('Dropping All Tables...');

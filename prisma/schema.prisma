@@ -7,11 +7,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  BASIC
-  PREMIUM
-  SELLER
-  ADMIN
+generator json_server {
+  provider       = "prisma-json-server-generator"
+  outputFileName = "db.json"
 }
 
 enum Grade {
@@ -47,6 +45,30 @@ enum Grade {
   Z
 }
 
+enum AccessType {
+  READ
+  WRITE
+  UPDATE
+  DELETE
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  NONBINARY
+}
+
+enum InventoryStatus {
+  InStock
+  OutOfStock
+  Low
+  Pending
+  Ordered
+  Shipped
+  Arrived
+  Cancelled
+}
+
 model Product {
   id               Int                @id @default(autoincrement())
   productName      String             @db.VarChar(255)
@@ -60,37 +82,47 @@ model Product {
   weight           Decimal?           @db.Decimal(16, 2)
   weightUnit       String?            @db.VarChar(20)
   features         Json?
-  isActive         Boolean?           @default(true)
-  availableForSale Boolean?           @default(true)
+  quantity         Int?               @default(0)
+  soldQuantity     Int?               @default(0)
+  isActive         Boolean?            @default(true)
+  isAvailable      Boolean?            @default(true)
   slug             String?            @unique
   imageUrl         String?
-  createdAt        DateTime           @default(now()) @db.Timestamp(6)
-  updatedAt        DateTime           @updatedAt @db.Timestamp(6)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
   categoryId       Int
   category         Category           @relation(fields: [categoryId], references: [id])
+  orderDetail      OrderDetail[]
+  cartItem         CartItem[]
   productInventory ProductInventory[]
   productImage     ProductImage[]
+  reviews          UserReview[]
 }
 
 model Category {
-  id            Int       @id @default(autoincrement())
-  categoryName  String    @db.VarChar(255)
-  categoryDesc  String    @db.VarChar(255)
-  parentId      Int?      @db.Integer
-  slug          String?   @unique
-  createdAt     DateTime  @default(now()) @db.Timestamp(6)
-  updatedAt     DateTime  @updatedAt @db.Timestamp(6)
-  product       Product[]
+  id                Int                 @id @default(autoincrement())
+  categoryName      String              @unique @db.VarChar(255)
+  categoryDesc      String              @db.VarChar(255)
+  slug              String?             @unique
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  //One-to-many self relations
+  parentCategoryId  Int?
+  parentCategory    Category?           @relation("ParentChildCategories", fields: [parentCategoryId], references: [id])
+  childCategories   Category[]          @relation("ParentChildCategories")
+  product           Product[]
+  promotionCategory PromotionCategory[]
 }
 
 model ProductInventory {
-  id        Int      @id @default(autoincrement())
-  quantity  Int      @db.Integer
-  status    String? // 'inStock', 'outOfStock', 'onOrder', etc.       
-  createdAt DateTime @default(now()) @db.Timestamp(6)
-  updatedAt DateTime @updatedAt @db.Timestamp(6)
-  productId Int
-  product   Product  @relation(fields: [productId], references: [id])
+  id           Int             @id @default(autoincrement())
+  quantity     Int             @default(0)
+  reStockLevel Int?
+  status       InventoryStatus // 'inStock', 'outOfStock', 'onOrder', etc.       
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  productId    Int
+  product      Product         @relation(fields: [productId], references: [id])
 }
 
 model ProductImage {
@@ -98,6 +130,309 @@ model ProductImage {
   imageUrl  String
   productId Int
   product   Product  @relation(fields: [productId], references: [id])
-  createdAt DateTime @default(now()) @db.Timestamp(6)
-  updatedAt DateTime @updatedAt @db.Timestamp(6)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+//User
+model User {
+  id                  Int                  @id @default(autoincrement())
+  email               String               @unique
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  authenticationToken AuthenticationToken?
+  preference          Json?
+  profile             UserProfile?
+  balance             Int                  @default(0)
+  authoredReviews     UserReview[]
+  cart                Cart?
+  login               Login?
+  roles               UserRole[]
+  paymentMethod       PaymentMethod[]
+  orders              Order[]
+}
+
+model Login {
+  id             String    @id @default(cuid())
+  username       String    @unique
+  hashedPassword String    @db.VarChar(255)
+  failedAttempts Int       @default(0)
+  lockoutTime    DateTime?
+  lastLogin      DateTime?
+  userId         Int       @unique
+  user           User      @relation(fields: [userId], references: [id])
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model AuthenticationToken {
+  id        Int       @id @default(autoincrement())
+  token     String    @unique
+  expiry    DateTime?
+  userId    Int       @unique
+  user      User      @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model UserProfile {
+  id          Int           @id @default(autoincrement())
+  firstName   String?       @db.VarChar(20)
+  lastName    String?       @db.VarChar(20)
+  userAddress UserAddress[]
+  phone       String?
+  birthDate   DateTime?
+  gender      Gender?
+  photo       String?
+  bio         String?
+  socialLinks SocialLink[] //A user can have many social links
+  userId      Int           @unique //Can only have one user
+  user        User          @relation(fields: [userId], references: [id])
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model UserAddress {
+  id            Int         @id @default(autoincrement())
+  userProfileId Int
+  addressId     Int
+  userProfile   UserProfile @relation(fields: [userProfileId], references: [id]) //A user address can have one user
+  address       Address     @relation(fields: [addressId], references: [id]) //A user address can have one address
+  isDefault     Boolean     @default(false)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([userProfileId, addressId, id])
+}
+
+model Address {
+  id             Int              @id @default(autoincrement())
+  street         String           @db.VarChar(20)
+  unit           String           @db.VarChar(10)
+  city           String           @db.VarChar(20)
+  zipcode        String           @db.VarChar(10)
+  state          String           @db.VarChar(12)
+  country        String           @db.VarChar(20)
+  userAddress    UserAddress[]
+  paymentDetail  PaymentDetail[]
+  shippingDetail ShippingDetail[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+}
+
+model SocialLink {
+  id             Int         @id @default(autoincrement())
+  userProfileId  Int         @unique
+  socialProvider String
+  socialUrl      String
+  UserProfile    UserProfile @relation(fields: [userProfileId], references: [id])
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
+model UserReview {
+  id        Int      @id @default(autoincrement())
+  title     String
+  message   String
+  rating    Int
+  authorId  Int
+  author    User     @relation(fields: [authorId], references: [id])
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PromotionCategory {
+  id          Int       @id @default(autoincrement())
+  category    Category  @relation(fields: [categoryId], references: [id])
+  categoryId  Int
+  promotion   Promotion @relation(fields: [promotionId], references: [id])
+  promotionId Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([categoryId, promotionId])
+}
+
+model Promotion {
+  id                Int                 @id @default(autoincrement())
+  promotionCategory PromotionCategory[]
+  promotionName     String
+  promotionDesc     String
+  promotionRate     Int
+  isActive          Boolean
+  startDate         DateTime
+  endDate           DateTime
+  CartItem          CartItem?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+}
+
+model CartItem {
+  id          Int        @id @default(autoincrement())
+  cartId      Int
+  cart        Cart       @relation(fields: [cartId], references: [id])
+  productId   Int
+  product     Product    @relation(fields: [productId], references: [id])
+  quantity    Int
+  Promotion   Promotion? @relation(fields: [promotionId], references: [id])
+  promotionId Int?       @unique
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Cart {
+  id        Int        @id @default(autoincrement())
+  userId    Int        @unique
+  user      User       @relation(fields: [userId], references: [id])
+  cartItems CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+enum OrderStatusType {
+  Pending
+  Processing
+  Shipped
+  Delivered
+  Cancelled
+}
+
+model Order {
+  id             String          @id @default(cuid())
+  status         OrderStatusType @default(Pending)
+  tax            Decimal         @db.Decimal(2, 2)
+  total          Decimal         @db.Decimal(20, 2)
+  createdAt      DateTime        @default(now())
+  userId         Int
+  user           User            @relation(fields: [userId], references: [id])
+  shippingDetail ShippingDetail?
+  paymentDetail  PaymentDetail?
+  orderDetail    OrderDetail[]
+  updatedAt      DateTime        @updatedAt
+}
+
+model OrderDetail {
+  id        Int      @id
+  orderId   String
+  productId Int
+  quantity  Int
+  total     Decimal  @db.Decimal(16, 2)
+  product   Product  @relation(fields: [productId], references: [id])
+  order     Order    @relation(fields: [orderId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PaymentDetail {
+  id               Int             @id
+  paymentMethod    PaymentMethod[]
+  billingAddressId Int
+  billingAddress   Address         @relation(fields: [billingAddressId], references: [id])
+  orderId          String          @unique
+  order            Order           @relation(fields: [orderId], references: [id])
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+}
+
+enum PaymentType {
+  CASH
+  DEBIT
+  CREDIT
+  BITCOIN
+  PAYPAL
+  AFFIRM
+  // Add other payment type names here..
+}
+
+model PaymentOption {
+  id            Int             @id
+  paymentType   PaymentType
+  paymentMethod PaymentMethod[]
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+model PaymentMethod {
+  id              Int           @id
+  userId          Int
+  user            User          @relation(fields: [userId], references: [id])
+  paymentDetailId Int
+  paymentDetail   PaymentDetail @relation(fields: [paymentDetailId], references: [id])
+  paymentOptionId Int
+  paymentOption   PaymentOption @relation(fields: [paymentOptionId], references: [id])
+  cardProvider    String?
+  nameOnCard      String?
+  isDefault       Boolean
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model ShippingDetail {
+  id                Int            @id
+  estimatedArrival  DateTime
+  shippingAddressId Int
+  shippingAddress   Address        @relation(fields: [shippingAddressId], references: [id])
+  shippingMethodId  Int
+  shippingMethod    ShippingMethod @relation(fields: [shippingMethodId], references: [id])
+  orderId           String         @unique
+  order             Order          @relation(fields: [orderId], references: [id])
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+}
+
+model ShippingMethod {
+  id             Int              @id
+  shippingDetail ShippingDetail[]
+  name           String
+  price          Decimal          @db.Decimal(10, 2)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+}
+
+model Invoice {
+  id String @id @default(cuid())
+}
+
+model UserRole {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  role      Role     @relation(fields: [roleId], references: [id])
+  userId    Int
+  roleId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, roleId])
+}
+
+model Role {
+  id          Int              @id @default(autoincrement())
+  name        String           @unique
+  users       UserRole[]
+  permissions RolePermission[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model RolePermission {
+  id           Int        @id @default(autoincrement())
+  role         Role       @relation(fields: [roleId], references: [id])
+  permission   Permission @relation(fields: [permissionId], references: [id])
+  roleId       Int
+  permissionId Int
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@unique([roleId, permissionId])
+}
+
+model Permission {
+  id         Int              @id @default(autoincrement())
+  resource   String
+  accessType AccessType
+  roles      RolePermission[]
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
 }

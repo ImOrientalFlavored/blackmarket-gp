@@ -1,58 +1,44 @@
-import Product from "../types/Product.type"
+import { Product } from "@prisma/client";
+import { Decimal } from "@prisma/client/runtime/library";
+import current from "../utils/date/date";
 
-const date = new Date().toISOString();
+const decimal = (x : unknown) => {return x as Decimal}
 
-const db = {
-    products:[
+const products:Partial<Product>[] = [
         {     
             id: 0,        
-            name: "Big Badda Boom",       
-            price: 100000000000,      
-            description: "Your target is hiding on a planet? No problem. Just, Blow the whole thing up", 
-            image: "string",
-            SKU:"X509k840",      
+            productName: "Big Badda Boom",       
+            productDesc: "Your target is hiding on a planet? No problem. Just, Blow the whole thing up", 
+            shortDesc:"",
+            grade:"F",
+            price: decimal(100000000000),      
+            imageUrl: "Big-Badda-Boom.png",
+            sku:"X509k840",      
             categoryId: 100,
-            rateId:{ 
-              rate: 4.5,    
-              count: 160982     
-            },
-            createdAt: date,  
-            modifiedAt:"",  
-            deletedAt:""  
+            createdAt: current,  
          },
          {      
             id: 1,       
-            name: "Galaxy Sizzler",      
-            price: 8000000000000,     
-            description: "Cook a whole galaxy and enjoy a buffet in mere hours",
-            image: "string",
-            SKU:"S29k4Y0",          
+            productName: "Galaxy Sizzler",      
+            productDesc: "Cook a whole galaxy and enjoy a buffet in mere hours",
+            grade:"C",
+            price: decimal(8000000000000),     
+            imageUrl: "string",
+            sku:"S29k4Y0",          
             categoryId:200, 
-            ratingId:{     
-              rate: 4.7,     
-              count: 34098   
-            },
-            createdAt: date,  
-            modifiedAt:"",  
-            deletedAt:"" 
+            createdAt: current,  
          },
          {      
             id: 2,         
-            name: 'Quantum Space Destructor XS',        
-            price: 5000000000,    
-            description: 'Destroy the Space-Time Continuum at the Quantum Level. This minified versions affect range is shy of 100km', 
-            image: "string",      
-            SKU:"X834VW6T0",          
+            productName: 'Quantum Space Destructor XS',        
+            price: decimal(5000000000),
+            grade:"O",    
+            productDesc: 'Destroy the Space-Time Continuum at the Quantum Level. This minified versions affect range is shy of 100km', 
+            imageUrl: "string",      
+            sku:"X834VW6T0",          
             categoryId: 100,  
-            ratingId:{          
-              rate: 4.2,      
-              count: 24982      
-            },
-            createdAt: date,   
-            modifiedAt:"",  
-            deletedAt:""
+            createdAt: current,   
          },
     ] 
-} as {products: Product[]}
 
-export default db
+export default products

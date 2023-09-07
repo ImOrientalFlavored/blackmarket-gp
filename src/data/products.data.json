@@ -1,0 +1,17 @@
+{
+    "id": 0,
+    "productName": "Big Badda Boom",
+    "productDesc": "Your target is hiding on a planet? No problem. Just, Blow the whole thing up",
+    "shortDesc": "Your target is hiding on a planet? No problem. Just, Blow the whole thing up",
+    "grade": "G",
+    "sku": "X509k840",
+    "size": "500 m\u00B3",
+    "weightUnit": "Explicabo ad sed rem blanditiis nisi voluptatum modi velit rem.",
+    "isActive": false,
+    "availableForSale": false,
+    "slug": "Maiores mollitia quam doloribus consequatur.",
+    "imageUrl": "string",
+    "createdAt": "2023-01-06T05:27:27.354Z",
+    "updatedAt": "2023-09-02T20:45:39.569Z",
+    "categoryId": 4
+  }

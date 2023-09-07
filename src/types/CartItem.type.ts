@@ -1,8 +1,8 @@
-export default interface CartItem{
+//import { CartItem } from "@prisma/client"
+export default interface CartItemType{
     id:number           //int
-    session_id:number   //int
-    product_id:number   //int
+    productId:number   //int
+    cartId:number   //int
     quantity:number     //int
-    created_at:string   //timestamp
-    modified_at:string  //timestamp
+    promotionId:string   //timestamp
  }

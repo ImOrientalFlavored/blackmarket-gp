@@ -1,6 +1,6 @@
 import db from '../../../../data/dummydb'
 import Product from '../../../../types/Product.type'
-import client from '../../../../db/client'
+import client from '../../../../lib/client'
 
 export const getItem = async (id:number) => {
     try {
