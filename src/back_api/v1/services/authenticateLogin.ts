@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
-import { getItemById } from '../login/models/login.models'
+import { getItemById } from '../models/login.models'
 import { Login } from '@prisma/client'
 
 export const authenticateLogin = async (req: Request, res: Response) => {

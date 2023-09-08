@@ -1,11 +1,11 @@
 import express 
 //{Request, Response,} 
 from "express";
-import productRouter from "./product/routes/products.routes";
-import userRouter from "./user/routes/users.routes";
-import cartRouter from "./cart/routes/carts.routes";
-import orderRouter from "./order/routes/orders.routes";
-import loginRouter from "./login/routes/login.routes"
+import productRouter from "./routes/product.routes";
+import userRouter from "./routes/user.routes";
+import cartRouter from "./routes/cart.routes";
+import orderRouter from "./routes/order.routes";
+import loginRouter from "./routes/login.routes"
 
 const router = express.Router();
 

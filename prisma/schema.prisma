@@ -7,10 +7,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+generator crud {
+  provider = "prisma-crud-generator"
+  output = "./generated/model/"
+}
+
 generator json_server {
   provider       = "prisma-json-server-generator"
   outputFileName = "db.json"
 }
+
 
 enum Grade {
   SSSSS
