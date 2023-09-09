@@ -25,6 +25,7 @@ const createNewUser = async (user: Partial<User>, login: Partial<Login>) => {
     try {
         const newUser = await client.user.create(userFields);
         console.log(newUser);
+        return newUser
       } catch (error: unknown) {
         if (error instanceof Error) {
           console.log(`Error creating new user: ${error.message}`);

@@ -19,7 +19,7 @@ const getItem = async (id:number) => {
 const listItems = async () => {
     
     try { 
-        const item = await client.authenticationToken.findMany({});
+        const item = await client.authenticationToken.findMany();
         return item;
     } catch (error) {
         console.log("Attempt to get authenticationToken list failed: ", error);

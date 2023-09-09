@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
-
 import { getItemById, listItems, editItem,  deleteItem } from '../models/user.models'
-import { User } from '@prisma/client'
+import { Login, User } from '@prisma/client'
 
 export const getUser = async (req:Request, res:Response) => {
     console.log("retrieving user");
@@ -45,5 +44,14 @@ export const deleteUser = (req:Request, res:Response) => {
 
     } catch (err) {
         res.status(500).send(err)
+    }
+}
+
+export const getUserByLogin = async (login:Login) => {
+    try {
+        const user = await getItemById(login.userId)
+        return user
+    } catch (err) {
+        return err
     }
 }

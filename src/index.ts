@@ -1,6 +1,6 @@
 import 'dotenv/config'
 
-import express from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import swaggerUI from 'swagger-ui-express/';
@@ -8,6 +8,7 @@ import swaggerJSDoc from 'swagger-jsdoc/';
 
 import v1Router from './back_api/v1';
 import v2Router from './back_api/v2';
+import { authenticateLogin } from 'middleware/authenticateLogin.middleware';
 
 
 const app = express();
@@ -51,6 +52,12 @@ app.use(express.urlencoded({extended: true }))
 //Routes
 app.use('/api/v1', v1Router)
 app.use('/api/v2', v2Router)
+app.use('/auth', authenticateLogin)
+app.post('/refresh',(req:Request, res:Response) => {
+  const cookies = req.headers
+  console.log(cookies);
+  res.send(cookies);
+})
 
 app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);
