@@ -1,0 +1,21 @@
+
+@media screen and (width < 1680px){
+    .side-nav.hidden{
+        opacity: 0;
+    }
+}
+
+@media screen and (width < 1919px){
+
+    .side-review{
+        max-width: 120px;
+    }
+    .side-nav
+    {
+        max-width: 120px;
+        margin-left: 120px;
+    }
+    .side-review.hidden{
+        opacity: 0;
+    }
+}

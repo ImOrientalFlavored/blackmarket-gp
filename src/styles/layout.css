@@ -1,0 +1,9 @@
+/*/ * {
+    outline: 1px solid rgba(35, 35, 35, 0.42);
+} */
+
+body{
+    display: flex;
+    justify-content: center;
+    /* position: relative; */
+}

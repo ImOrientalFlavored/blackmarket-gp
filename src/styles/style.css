@@ -1,0 +1,15 @@
+*{
+    box-sizing: border-box;
+}
+body{  background-image: linear-gradient(rgba(0, 0, 0, 0.5),rgba(0, 0, 0, 0.65)) , url("src/assets/img/low_contrast_linen.png");
+    
+    background-color: rgb(19, 19, 19);
+    /* 
+    background-blend-mode: multiply;
+    filter:brightness("50%");*/
+}
+
+a{
+    text-decoration: none;
+    color: rgb(81, 48, 210);
+}
