@@ -1,40 +1,43 @@
-import client from "@lib/client"
-import { RolePermission } from "@prisma/client"
+import client from "@lib/client";
+import { AccessType } from "@prisma/client";
 
 
-async function grantPremiumRoleTo(userId:number){
+async function grantBasicRoleTo(userId:number){
+
+    
+    const permissions:AccessType[] = [AccessType.WRITE, AccessType.READ, AccessType.UPDATE, AccessType.DELETE];
+    const resource = ["premium-write-access", "premium-read-access", "premium-update-access", "premium-delete-access"];
 
     const role = await client.role.findUnique({
         where: {
             name: "PREMIUM"
         }
     })
-    if(!role){ return }
-    console.log(role);
-    
 
-    const permission = await client.permission.findUnique({
-        where: {
-            id: 2
-        }
-    })
-    if(!permission){ return }
-    console.log(permission);
-    
+    if (!role) { return }
 
-    const rolePermission:RolePermission = await client.rolePermission.create(
-        {
+    for (let accessType of permissions) {
+        const permission = await client.permission.findFirst({
+            where: {
+                accessType: accessType,
+                resource: resource[permissions.indexOf(accessType)]
+            }
+        })
+
+        if (!permission) { continue }
+
+        const rolePermission = await client.rolePermission.create({
             data: {
                 roleId: role.id,
-                permissionId: permission.id
+                permissionId: permission.id,
             }
-        }
-    )
-    if(!rolePermission){ return }
-    console.log(rolePermission);
+        })
+
+        if(!rolePermission){ continue }
+        
+        console.log(rolePermission);
+    }
     
-
-
     const userRole = await client.userRole.create({
         data: {
             userId: userId,
@@ -47,4 +50,4 @@ async function grantPremiumRoleTo(userId:number){
 }
 
 
-export default grantPremiumRoleTo;
+export default grantBasicRoleTo;

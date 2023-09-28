@@ -8,9 +8,9 @@ import { refreshUserToken } from 'back_api/v1/controllers/authenticationToken.co
 import retrieveUserToken from 'back_api/v1/services/retrieveUserToken'
 
 export const authenticateLogin = async (req: Request, res: Response) => {
-    const { username, hashedPassword } = req.body.data as Partial<Login>
+    const { username, password } = req.body.data as Partial<Login>
 
-    if (!username ||!hashedPassword) {
+    if (!username ||!password) {
         return res.status(400).json({
             message: 'Please provide username and password',
         })
@@ -21,7 +21,7 @@ export const authenticateLogin = async (req: Request, res: Response) => {
             message: 'Invalid username',
         })
     }
-    const isMatch = await bcrypt.compare(hashedPassword, login.hashedPassword)
+    const isMatch = await bcrypt.compare(password, login.password)
     if (!isMatch) {
         return res.status(400).json({
             message: 'Incorrect password',

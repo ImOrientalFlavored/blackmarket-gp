@@ -3,44 +3,44 @@ import { Login } from "@prisma/client";
 const logins: Partial<Login>[] = [
     {
         username: "HyperionIsAwesome",
-        hashedPassword: "abc123",
+        password: "abc123",
     },
     {
         username: "LeaderOfAB",
-        hashedPassword: "allspark",
+        password: "allspark",
     },
     {
         username: "RulerOfCybertron",
-        hashedPassword: "whereistheenergon",
+        password: "whereistheenergon",
     },
     {
         username: "Thorsucks",
-        hashedPassword: "ILikecookies",
+        password: "ILikecookies",
         },
     {
         username: "MFStarLord",
-        hashedPassword: "trashpanda",
+        password: "trashpanda",
     },
     {
         username: "ShinyHoarder",
-        hashedPassword: "tinktink",
+        password: "tinktink",
     },
     {
         username: "TimeWanderer100",
-        hashedPassword: "smartaf",
+        password: "smartaf",
 
     },
     {
         username: "SolymusMatriarch",
-        hashedPassword: "finestwool",
+        password: "finestwool",
     },
     {
         username: "Black",
-        hashedPassword: "kawabunga",
+        password: "kawabunga",
     },
     {
         username: "Bellder",
-        hashedPassword: "tinderless",
+        password: "tinderless",
     },
 ]
 

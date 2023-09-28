@@ -7,16 +7,16 @@ export async function registerNewUser(req: Request, res: Response, next: NextFun
     //console.log(req.body);
     console.log("Registering new user in progress");
 
-    const { email, username, hashedPassword } = req.body.data;
+    const { email, username, password } = req.body.data;
 
     console.log(email);
     console.log(username);
-    console.log(hashedPassword);
+    console.log(password);
     
     
     try {
         const userToken = generateRefreshToken(req.body.data);
-        const newUser = await createNewUser({email}, { username, hashedPassword });
+        const newUser = await createNewUser({email}, { username, password });
         
         if(!userToken){ return res.status(400).json({error: "Could not generate token"}); }
         if(!newUser){ return res.status(400).json({error: "Could not create new user"}); }

@@ -32,12 +32,44 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
-    "baseUrl": "./src",
+    "baseUrl": "./",
     "paths": {
-      "@lib/client": ["./lib/client.ts"],
+      "@lib/client": [
+        "./src/lib/client.ts"
+      ],
+      "~assets/*": [
+        "src/assets/*"
+      ],
+      "~components/*": [
+        "src/components/*"
+      ],
+      "~front_api/*": [
+        "src/front_api/*"
+      ],
+      "~hook/*": [
+        "src/hook/*"
+      ],
+      "~lib/*": [
+        "src/lib/*"
+      ],
+      "~pages/*": [
+        "src/pages/*"
+      ],
+      "~styles/*": [
+        "src/styles/*"
+      ],
+      "~types/*": [
+        "src/types/*"
+      ],
+      "~utils/*": [
+        "src/utils/*"
+      ],
+      "~/*": [
+        "src/*"
+      ]
     }
-
   },
+  
   "include": ["src/**/*"],
   "exclude": ["node_modules"],
   "references": [{ "path": "./tsconfig.node.json" }], 

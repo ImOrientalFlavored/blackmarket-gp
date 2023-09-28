@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  //output = "./output/prisma-client-js"
 }
 
 datasource db {
@@ -28,6 +29,33 @@ generator zod {
   // https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-by-null-values
   prismaJsonNullability    = true // (default) uses prisma's scheme for JSON field nullability
   // prismaJsonNullability = false // allows null assignment to optional JSON fields
+}
+
+generator docs {
+  provider = "node node_modules/prisma-docs-generator"
+}
+
+generator erd {
+  provider = "prisma-erd-generator"
+}
+
+generator json {
+  provider = "prisma-json-types-generator"
+
+  // The namespace to generate the types in.
+  namespace = "PrismaJson"
+
+  // The name of the client output type. By default it will try
+  // to find it automatically
+  // (./ -> relative to schema, or an importable path to require() it)
+  clientOutput = "finds automatically"
+
+  // In case you need to use a root type inside PrismaJson, export it
+  // inside the namespace and we will add a index signature to it
+  useType = "PrismaJson.GlobalType"
+
+  // If untyped JSON fields should be any instead of `unknown`.
+  allowAny = false
 }
 
 generator crud {
@@ -119,6 +147,8 @@ model Product {
   imageUrl         String?
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
+  promotionId      Int                @unique
+  promotion        Promotion          @relation(fields: [promotionId], references:[id])
   categoryId       Int
   category         Category           @relation(fields: [categoryId], references: [id])
   orderDetail      OrderDetail[]
@@ -184,7 +214,7 @@ model User {
 model Login {
   id             String    @id @default(cuid())
   username       String    @unique
-  hashedPassword String    @db.VarChar(255)
+  password       String    @db.VarChar(255)
   failedAttempts Int       @default(0)
   lockoutTime    DateTime?
   lastLogin      DateTime?
@@ -242,6 +272,12 @@ model Address {
   zipcode        String           @db.VarChar(10)
   state          String           @db.VarChar(12)
   country        String           @db.VarChar(20)
+  planet         String?
+  solarSystem    String?
+  galaxy         String?
+  localGroup     String?
+  localCluster   String?
+  universe       String?
   userAddress    UserAddress[]
   paymentDetail  PaymentDetail[]
   shippingDetail ShippingDetail[]
@@ -293,7 +329,7 @@ model Promotion {
   isActive          Boolean
   startDate         DateTime
   endDate           DateTime
-  CartItem          CartItem?
+  product           Product?            
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
 }
@@ -305,8 +341,6 @@ model CartItem {
   productId   Int
   product     Product    @relation(fields: [productId], references: [id])
   quantity    Int
-  Promotion   Promotion? @relation(fields: [promotionId], references: [id])
-  promotionId Int?       @unique
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 }

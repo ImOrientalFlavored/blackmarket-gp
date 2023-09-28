@@ -1,17 +1,42 @@
+import { 
+  Route, 
+  RouterProvider, 
+  createBrowserRouter, 
+  createRoutesFromElements } from 'react-router-dom'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
-import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from 'react-router-dom'
+
+/**
+*  component routes
+**/
 import Index from './pages/Index';
 import Product from './pages/Product';
-import Profile from './pages/Profile';
+import Profile from './pages/Account';
 import Root from './pages/Root';
 import SearchResult from './pages/SearchResult';
-import SignIn from './pages/SignIn';
-import SignUp from './pages/SignUp';
-import ErrorPage from './pages/ErrorPage';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import ErrorPage from './ErrorPage';
+import Checkout from '~pages/Checkout';
+import Cart from '~pages/Cart';
 
+/**
+*  component loaders
+**/
+import { 
+  manyProductsLoader, 
+  singleProductLoader 
+} from '~front_api/loaders/loaders';
 
+/**
+ * component actions
+ * 
+**/ 
+
+//
+
+// create the routes for the app components 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route
@@ -21,11 +46,10 @@ const router = createBrowserRouter(
       //action={rootAction}
       errorElement={<ErrorPage />}
     >
-      <Route errorElement={<ErrorPage />}>
         <Route 
           index 
           element={<Index />}
-          //loader={allPostsLoader}
+          loader={manyProductsLoader}
         />
         <Route
           path="/search/*"
@@ -33,26 +57,35 @@ const router = createBrowserRouter(
           //loader={postLoader}
         />
         <Route
-          path="/products/:productId"
+          path="/products/:id"
           element={<Product />}
-          //loader={singlePostLoader}
+          loader={singleProductLoader}
           //action={postAction}
         />
-
         <Route
           path="/profile"
           element={<Profile />}
           //loader={profileLoader}
         />
-         <Route
+        <Route
+          path="/checkout"
+          element={<Checkout />}
+          //loader={LoginLoader}
+        />
+        <Route
           path="/sign-in"
-          element={<SignIn />}
+          element={<Login />}
         />
-         <Route
+        <Route
           path="/sign-up"
-          element={<SignUp />}
+          element={<Register />}
         />
-      </Route>
+        <Route 
+          path='/cart' 
+          element={<Cart />} 
+          //loader={cartItemLoader}  
+        />
+      
     </Route>
   )
 );

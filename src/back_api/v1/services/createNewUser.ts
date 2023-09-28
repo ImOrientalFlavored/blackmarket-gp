@@ -1,12 +1,12 @@
 import client from "../../../lib/client";
-import { Login, User } from "@prisma/client";
+import { Cart, Login, Order, User, UserProfile, UserRole } from "@prisma/client";
 
 const createNewUser = async (user: Partial<User>, login: Partial<Login>) => {
     const { email } = user;
-    const { username, hashedPassword } = login;
+    const { username, password } = login;
 
     if (!email) throw new Error('Invalid email');
-    if (!(username && hashedPassword)) throw new Error('Invalid login credentials');
+    if (!(username && password)) throw new Error('Invalid login credentials');
     const isNewUser = await client.user.findUnique({
         where:{
             email
@@ -14,11 +14,17 @@ const createNewUser = async (user: Partial<User>, login: Partial<Login>) => {
     })
     if(isNewUser) throw new Error('Email is already used')
     
+    const profile = {} as UserProfile;
+    const orders = [] as Order[];
+    const cart = {} as Cart;
+
     const userFields = {
       data: {
         email,
-        cart: { create: {} },
-        ...(username && hashedPassword ? { login: { create: { username, hashedPassword } } } : {}),
+        cart: { create: cart },
+        orders: { create: orders },
+        profile: { create: profile },
+        ...(username && password ? { login: { create: { username, password } } } : {}),
       },
     };
     

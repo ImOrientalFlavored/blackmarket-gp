@@ -3,9 +3,9 @@ import { Request, Response } from 'express'
 
 import { getItem, listItems, editItem, addItem, deleteItem } from '../models/address.models'
 
-export const getAddress = (req:Request, res:Response) => {
+export const getAddress = async (req:Request, res:Response) => {
     try {
-        const resp = getItem(parseInt(req.params.id))
+        const resp = await getItem(parseInt(req.params.id))
         res.status(200).json(resp)
         console.log(resp);
     } catch (err) {
@@ -13,9 +13,9 @@ export const getAddress = (req:Request, res:Response) => {
     }
 }
 
-export const listAddress = (_req:Request, res:Response) => {
+export const listAddress = async (_req:Request, res:Response) => {
     try {
-        const resp = listItems()
+        const resp = await listItems()
         res.status(200).json(resp)
         console.log(resp);
     } catch (err) {

@@ -2,10 +2,11 @@ import { Request, Response } from 'express'
 
 import { getItem, listItems, editItem, addItem, deleteItem } from '../models/product.models'
 
-export const getProduct = (req:Request, res:Response) => {
+export const getProduct = async (req:Request, res:Response) => {
     try {
-        const resp = getItem(parseInt(req.params.id))
-        res.status(200).json(resp)
+        const resp = await getItem(parseInt(req.params.id))
+        res.setHeader('Content-Type', 'application/json');
+        res.status(200).json({data:resp})
         console.log(resp);
         
     } catch (err) {
@@ -13,19 +14,20 @@ export const getProduct = (req:Request, res:Response) => {
     }
 }
 
-export const listProducts = (_req:Request, res:Response) => {
+export const listProducts = async (_req:Request, res:Response) => {
     try {
-        const resp = listItems()
-        res.status(200).json(resp)
+        const resp = await listItems()
+        res.setHeader('Content-Type', 'application/json');
+        res.status(200).json({data:resp})
         console.log(resp);
     } catch (err) {
         res.status(500).send(err)
     }
 }
 
-export const editProduct = (req:Request, res:Response) => {
+export const editProduct = async (req:Request, res:Response) => {
     try {
-        const resp = editItem(parseInt(req.params.id), req.body)
+        const resp = await editItem(parseInt(req.params.id), req.body)
         res.status(200).json(resp)
 
     } catch (err) {
@@ -33,9 +35,9 @@ export const editProduct = (req:Request, res:Response) => {
     }
 }
 
-export const addProduct = (req:Request, res:Response) => {
+export const addProduct = async (req:Request, res:Response) => {
     try {
-        const resp = addItem(req.body)
+        const resp = await addItem(req.body)
         res.status(200).json(resp)
 
     } catch (err) {
@@ -43,9 +45,9 @@ export const addProduct = (req:Request, res:Response) => {
     }
 }
 
-export const deleteProduct = (req:Request, res:Response) => {
+export const deleteProduct = async (req:Request, res:Response) => {
     try {
-        const resp = deleteItem(parseInt(req.params.id))
+        const resp = await deleteItem(parseInt(req.params.id))
         res.status(200).json(resp)
 
     } catch (err) {
